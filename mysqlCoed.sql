@@ -186,6 +186,9 @@ update client
 set boursier = false 
 where id_client in ('C006','C007','C008','C009','C010','C011','C012','C123');
 
+alter table medcin 
+add column  prix_inter decimal(10,2) ;
+
 
 insert into chambre(etage, nbrlits, cout_journee, id_service)
 values
@@ -293,6 +296,12 @@ values (1,'M000'),
      (13,'M012');
      
 
+update medcin 
+set prix_inter = 40.00
+where id_medcin in ('M000','M006','M002','M004','M008','M010','M012');
+update medcin 
+set prix_inter = 50.00
+where id_medcin in ('M001','M003','M005','M007','M009','M011');
 
 
 
