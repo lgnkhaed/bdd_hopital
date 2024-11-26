@@ -5,14 +5,7 @@
 create schema Projet_BDR;
 use projet_bdr;
 
-create table client (
-     id_client  int auto_increment  NOT NULL,
-     nom_client    varchar(15) not null ,
-     prenom_client   varchar(15) not null , 
-     adresse_client   varchar(20), 
-     date_de_naissance date , 
-     primary key (id_client) 
-     );
+
 
 
 create table medcin (
@@ -45,7 +38,7 @@ create table chambre (
 
 create table place ( 
   id_place int auto_increment not null primary key , 
-  id_chambre varchar(10)  , 
+  id_chambre int  , 
   foreign key (id_chambre) references chambre(id_chambre)
   on delete set null 
 );
@@ -112,6 +105,13 @@ ALTER TABLE intervention_medcin DROP PRIMARY KEY;
 ALTER TABLE intervention_medcin ADD PRIMARY KEY (id_inter, id_medcin);
 set foreign_key_checks = 1 ;
 
+set foreign_key_checks = 0 ;
+ALTER TABLE intervention_sejour DROP PRIMARY KEY;
+ALTER TABLE intervention_sejour ADD PRIMARY KEY (id_intervention, id_sejour);
+set foreign_key_checks = 1 ;
+
+drop table intervention_sejour; 
+
 
 ```
 
@@ -120,10 +120,10 @@ set foreign_key_checks = 1 ;
 ``` sql 
 insert into client(nom_client , prenom_client , adresse_client , date_de_naissance )
  values
- ('khaled','laggoun','limoges','2004-08-01'),
- ('aboud','laggoun','alger','2013-11-04'),
- ('aymen','laggoun','alger','2009-10-10'),
-  ('Smith', 'John', 'New York', '1990-01-15'),
+('khaled','laggoun','limoges','2004-08-01'),
+('aboud','laggoun','alger','2013-11-04'),
+('aymen','laggoun','alger','2009-10-10'),
+('Smith', 'John', 'New York', '1990-01-15'),
 ('Johnson', 'Emily', 'Los Angeles', '1985-06-20'),
 ('Brown', 'Michael', 'London', '1982-11-05'),
 ('Williams', 'Sarah', 'Manchester', '1994-02-28'),
@@ -161,7 +161,7 @@ values
  
  insert into categorie (nom_categorie) 
 values 
-('chirurgie'),
+('opération hernie discale'),
 ('radiologie'),
 ('Appendicectomie'),
 ('Cholécystectomie'),
@@ -172,15 +172,7 @@ values
 ('Arthroplastie'),
 ('hanche'),
 ('Craniotomie'),
-('Chirurgie'),
 ('bariatrique'),
-('Hernie'),
-('inguinale'),
-('Césarienne'),
-('Mastectomie'),
-('Réduction'),
-('fracture'),
-('Liposuccion'),
 ('Résection'),
 ('intestinale'),
 ('Nephrectomie'),
@@ -193,22 +185,7 @@ values
 ('Angiographie'),
 ('Mammographie'),
 ('Fibroscopie'),
-('Radiothérapie'),
-('Tomographie'),
-('TEP'),
-('Densitométrie'),
-('Médecine'),
-('interne'),
-('Cardiologie'),
-('Endoscopie'),
-('Dialyse'),
-('Bronchoscopie'),
-('Fibroscopie'),
-('pulmonaire'),
-('Rééducation'),
-('respiratoire'),
-('Tests'),
-('allergiques');
+('Radiothérapie');
 
 
 
@@ -483,9 +460,7 @@ UPDATE client
 SET boursier = true
 WHERE id_client IN (1, 6, 3, 11, 13);
 
-update client 
-set boursier = false 
-where id_client = null ;
+
 
 UPDATE client 
 SET boursier = false 
