@@ -2,17 +2,17 @@ create schema projet_bdr2;
 use projet_bdr2;
 
 create table client (
-     id_client  varchar(10) primary key   NOT NULL,
-     nom_client    varchar(15) not null ,
-     prenom_client   varchar(15) not null , 
+     id_client  varchar(20) primary key   NOT NULL,
+     nom_client    varchar(25) not null ,
+     prenom_client   varchar(25) not null , 
      adresse_client   varchar(20), 
      date_de_naissance date 
 );
 
 create table medcin (
-    id_medcin varchar(10)  primary key  not null , 
-    nom_medcin varchar (15) not null ,
-    prenom_medcin varchar (15) not null ,
+    id_medcin varchar(20)  primary key  not null , 
+    nom_medcin varchar (25) not null ,
+    prenom_medcin varchar (25) not null ,
     adresse_medcin  varchar(20) , 
     date_de_naissance date
     ); 
@@ -20,8 +20,8 @@ create table medcin (
     
 create table service (
     id_service int auto_increment not null primary key , 
-    nom_service varchar(15) not null , 
-    id_medcin_respo  varchar(10)  , 
+    nom_service varchar(25) not null , 
+    id_medcin_respo  varchar(20)  , 
     foreign key (id_medcin_respo) references medcin(id_medcin)
 	on delete set null 
 );
@@ -46,7 +46,7 @@ create table place (
 
 create table categorie( 
    id_categorie int auto_increment  not null primary key , 
-   nom_categorie varchar(20)
+   nom_categorie varchar(50)
 );
 
 
@@ -54,9 +54,9 @@ create table sejour(
    id_sejour varchar(10)  not null primary key , 
    date_debut_sejour   date  not null , 
    date_fin_sejour date not null ,  
-   id_client varchar(10) not null , 
+   id_client varchar(20) not null , 
    foreign key (id_client) references client(id_client) ,
-   id_medcin varchar(10)  not null , 
+   id_medcin varchar(20)  not null , 
    foreign key (id_medcin) references medcin(id_medcin),
    id_place int not null , 
    foreign key (id_place) references place(id_place)
@@ -76,7 +76,7 @@ create table intervention (
 create table medcin_service (
     id_service int  not null  ,
     foreign key (id_service) references service(id_service), 
-    id_medcin varchar(10)  not null , 
+    id_medcin varchar(20)  not null , 
     foreign key (id_medcin) references medcin(id_medcin) ,
     primary key (id_service,id_medcin)
 );
@@ -85,7 +85,7 @@ create table medcin_service (
 create table intervention_medcin (
     id_inter int  not null , 
     foreign key (id_inter) references  intervention(id_intervention),
-    id_medcin varchar(10) not null , 
+    id_medcin varchar(20) not null , 
     foreign key (id_medcin) references medcin(id_medcin),
     primary key (id_inter , id_medcin ) 
 );
