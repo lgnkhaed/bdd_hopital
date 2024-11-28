@@ -6,7 +6,8 @@ create table client (
      nom_client    varchar(25) not null ,
      prenom_client   varchar(25) not null , 
      adresse_client   varchar(20), 
-     date_de_naissance date 
+     date_de_naissance date , 
+     boursier Boolean 
 );
 
 create table medcin (
@@ -14,7 +15,9 @@ create table medcin (
     nom_medcin varchar (25) not null ,
     prenom_medcin varchar (25) not null ,
     adresse_medcin  varchar(20) , 
-    date_de_naissance date
+    date_de_naissance date,
+    prix_inter decimal(10,2) 
+
     ); 
     
     
@@ -46,7 +49,9 @@ create table place (
 
 create table categorie( 
    id_categorie int auto_increment  not null primary key , 
-   nom_categorie varchar(50)
+   nom_categorie varchar(50),
+   id_service int ,
+   foreign key (id_service) references service(id_service)
 );
 
 
@@ -91,71 +96,44 @@ create table intervention_medcin (
 );
 
 
-
 -- insertion 
 
-INSERT INTO client (id_client, nom_client, prenom_client, adresse_client, date_de_naissance)
+INSERT INTO client (id_client, nom_client, prenom_client, adresse_client, date_de_naissance,boursier)
 VALUES
-('C123', 'laggoun', 'khaled', 'limoges', '2004-08-01'),
-('C001', 'laggoun', 'aboud', 'alger', '2013-11-04'),
-('C002', 'laggoun', 'aymen', 'alger', '2009-10-10'),
-('C003', 'Smith', 'John', 'New York', '1990-01-15'),
-('C004', 'Johnson', 'Emily', 'Los Angeles', '1985-06-20'),
-('C005', 'Brown', 'Michael', 'London', '1982-11-05'),
-('C006', 'Williams', 'Sarah', 'Manchester', '1994-02-28'),
-('C007', 'Jones', 'David', 'Sydney', '1988-09-12'),
-('C008', 'Davis', 'Laura', 'Melbourne', '1991-03-18'),
-('C009', 'Miller', 'James', 'Toronto', '1980-12-03'),
-('C010', 'Wilson', 'Linda', 'Vancouver', '1993-07-25'),
-('C011', 'Moore', 'Robert', 'Berlin', '1987-08-30'),
-('C012', 'Bouchard', 'Manon', 'Limoges', '1998-01-31');
+('C234' , 'Hamiti' , 'Amine','Canada', '2005-01-04', true),
+('C123', 'laggoun', 'khaled', 'limoges', '2004-08-01',false ),
+('C001', 'laggoun', 'aboud', 'alger', '2013-11-04',true ),
+('C002', 'laggoun', 'aymen', 'alger', '2009-10-10',true ),
+('C003', 'Smith', 'John', 'New York', '1990-01-15',true ),
+('C004', 'Johnson', 'Emily', 'Los Angeles', '1985-06-20',true),
+('C005', 'Brown', 'Michael', 'London', '1982-11-05',true),
+('C006', 'Williams', 'Sarah', 'Manchester', '1994-02-28',true),
+('C007', 'Jones', 'David', 'Sydney', '1988-09-12',false),
+('C008', 'Davis', 'Laura', 'Melbourne', '1991-03-18',false),
+('C009', 'Miller', 'James', 'Toronto', '1980-12-03',false),
+('C010', 'Wilson', 'Linda', 'Vancouver', '1993-07-25',false),
+('C011', 'Moore', 'Robert', 'Berlin', '1987-08-30',false),
+('C012', 'Bouchard', 'Manon', 'Limoges', '1998-01-31',false);
 
 
 
-INSERT INTO medcin (id_medcin, nom_medcin, prenom_medcin, adresse_medcin, date_de_naissance)
+INSERT INTO medcin (id_medcin, nom_medcin, prenom_medcin, adresse_medcin, date_de_naissance, prix_inter)
 VALUES
-('M000', 'Dupond', 'Carlos', 'Madrid', '1979-05-22'),
-('M001', 'Durant', 'Liam', 'Oslo', '1983-11-16'),
-('M002', 'Guedourra', 'Sara Leila', 'Alger', '2005-03-28'),
-('M003', 'Lopez', 'Maria', 'Barcelona', '1985-04-30'),
-('M004', 'Schmidt', 'Jan', 'Berlin', '1980-12-12'),
-('M005', 'Kim', 'Jiwoo', 'Seoul', '1992-03-21'),
-('M006', 'Fischer', 'Anna', 'Zurich', '1987-02-25'),
-('M007', 'Martinez', 'Pablo', 'Buenos Aires', '1995-01-11'),
-('M008', 'Rossi', 'Giovanni', 'Rome', '1988-08-03'),
-('M009', 'Santos', 'Paula', 'Lisbon', '1991-06-17'),
-('M010', 'Smith', 'John', 'New York', '1976-02-15'),
-('M011', 'Brown', 'Emily', 'London', '1984-06-28'),
-('M012', 'Williams', 'James', 'Sydney', '1990-09-12');
+('M000', 'Dupond', 'Carlos', 'Madrid', '1979-05-22',40.00),
+('M001', 'Durant', 'Liam', 'Oslo', '1983-11-16',50.00),
+('M002', 'Guedourra', 'Sara Leila', 'Alger', '2005-03-28',40.00),
+('M003', 'Lopez', 'Maria', 'Barcelona', '1985-04-30',50.00),
+('M004', 'Schmidt', 'Jan', 'Berlin', '1980-12-12',40.00),
+('M005', 'Kim', 'Jiwoo', 'Seoul', '1992-03-21',50.00),
+('M006', 'Fischer', 'Anna', 'Zurich', '1987-02-25',40.00),
+('M007', 'Martinez', 'Pablo', 'Buenos Aires', '1995-01-11',50.00),
+('M008', 'Rossi', 'Giovanni', 'Rome', '1988-08-03',40.00),
+('M009', 'Santos', 'Paula', 'Lisbon', '1991-06-17',50.00),
+('M010', 'Smith', 'John', 'New York', '1976-02-15',40.00),
+('M011', 'Brown', 'Emily', 'London', '1984-06-28',50.00),
+('M012', 'Williams', 'James', 'Sydney', '1990-09-12',40.00);
 
 
-insert into categorie (nom_categorie) 
-values 
-('opération hernie discale'),
-('radiologie'),
-('Appendicectomie'),
-('Cholécystectomie'),
-('Prostatectomie'),
-('Hystérectomie'),
-('Chirurgie'),
-('cardiaque'),
-('Arthroplastie'),
-('hanche'),
-('Craniotomie'),
-('bariatrique'),
-('Résection'),
-('intestinale'),
-('Nephrectomie'),
-('Radiologie'),
-('Radiographie'),
-('Scanner'),
-('Tomodensitométrie'),
-('IRM'),
-('Échographie'),
-('Angiographie'),
-('Mammographie'),
-('Fibroscopie'),
-('Radiothérapie');
 
 
 
@@ -175,20 +153,10 @@ values
 ('Hématologie', 'M011'),
 ('Ophtalmologie', 'M012');
 
-
-alter table client 
-add column boursier Boolean;
-
-update client
-SET boursier = true
-WHERE id_client IN ('C001', 'C002', 'C003', 'C004', 'C005');
-update client 
-set boursier = false 
-where id_client in ('C006','C007','C008','C009','C010','C011','C012','C123');
-
-alter table medcin 
-add column  prix_inter decimal(10,2) ;
-
+insert into categorie (nom_categorie,id_service) 
+values 
+('opération hernie discale',2),
+('IRM',4);
 
 insert into chambre(etage, nbrlits, cout_journee, id_service)
 values
@@ -249,25 +217,22 @@ VALUES
 (25), (25),
 (26), (26);
 
-insert into client 
-value  ('C234' , 'Hamiti' , 'Amine','Canada', '2005-01-04', true);
 
 insert into sejour 
-values ('S123' , '2024-09-01','2024-09-04' , 'C234' , 'M001' , 1);
+values
+('S123' , '2024-09-01','2024-09-04' , 'C234' , 'M001' , 1),
+('S001','2022-08-01','2022-08-04','C123','M002',10),
+('S002','2023-04-01','2023-04-04','C001','M005',12);
+
 
 INSERT INTO intervention ( id_sejour, id_categorie, cout_intervention)
 VALUES
 ( 'S123', 1, 150.00),
-( 'S123', 3, 200.00),
-( 'S123', 5, 300.00),
-( 'S123', 7, 400.00);
-
-INSERT INTO intervention_medcin (id_inter, id_medcin)
-VALUES
-(1, 'M000'),
-(2, 'M001'),
-(3, 'M000'),
-(4, 'M001');
+( 'S123', 2, 200.00),
+( 'S123', 1, 300.00),
+( 'S123', 2, 400.00),
+('S001',2,2500.00), 
+('S002',1,2500.00);
 
 
 insert into medcin_service(id_service, id_medcin) 
@@ -293,23 +258,39 @@ values (1,'M000'),
      (10,'M010'),
      (11,'M010'),
      (12,'M011'),
-     (13,'M012');
+     (13,'M012'),
+     (2,'M002'),
+     (2,'M005'),
+     (2,'M008'),
+     (2,'M009');
      
+-- faut modifier ça aussi 
+ insert into intervention_medcin(id_inter , id_medcin ) 
+values 
+(1,'M001'),
+(1,'M003'),
+(2,'M004'),
+(2,'M009'),
+(4,'M004'),
+(4,'M009'),
+(5,'M004'),
+(5,'M009'),
+(3,'M011'),
+(3,'M001'),
+(6,'M001'),
+(6,'M005');
+ 
 
-update medcin 
-set prix_inter = 40.00
-where id_medcin in ('M000','M006','M002','M004','M008','M010','M012');
-update medcin 
-set prix_inter = 50.00
-where id_medcin in ('M001','M003','M005','M007','M009','M011');
+ create view medecin_service as 
+    select s.id_service , s.nom_service , m.id_medcin , m.nom_medcin 
+    from service s 
+    join  medcin_service ms using ( id_service)
+    join medcin m  using (id_medcin);
 
 
-
-     -- les requetes :
-     -- 1  
-    select distinct id_client , nom_client , prenom_client 
-    from client join sejour using (id_client)
-    join intervention using (id_sejour) 
-    join intervention_medcin on intervention_medcin.id_inter =  intervention.id_intervention 
-    join medcin on medcin.id_medcin = intervention_medcin.id_medcin 
-    where medcin.nom_medcin in ('Dupond' , 'Durant');  
+create view vue_intervention_medcin as 
+select m.id_medcin , m.nom_medcin , m.prenom_medcin , im.id_inter, i.id_categorie , c.nom_categorie
+from medcin m 
+join intervention_medcin im  using (id_medcin) 
+join intervention i on i.id_intervention = im.id_inter
+join categorie c using (id_categorie) ;
