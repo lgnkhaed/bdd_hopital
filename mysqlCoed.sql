@@ -222,7 +222,13 @@ insert into sejour
 values
 ('S123' , '2024-09-01','2024-09-04' , 'C234' , 'M001' , 1),
 ('S001','2022-08-01','2022-08-04','C123','M002',10),
-('S002','2023-04-01','2023-04-04','C001','M005',12);
+('S002','2023-04-01','2023-04-04','C001','M005',12),
+('S003' , '2020-08-06', '2020-08-08','C003','M000',8),
+('S004' , '2021-01-29', '2021-02-04','C003','M000',9),
+('S005' , '2022-01-15', '2022-01-20','C005','M000',11),
+('S006' , '2023-01-15', '2023-01-18','C005','M000',15),
+('S007' , '2023-02-10', '2023-02-13','C007','M000',19),
+('S008' , '2024-02-18', '2023-02-21','C007','M007',14);
 
 
 INSERT INTO intervention ( id_sejour, id_categorie, cout_intervention)
@@ -281,7 +287,7 @@ values
 (6,'M005');
  
 
- create view medecin_service as 
+create view medecin_service as 
     select s.id_service , s.nom_service , m.id_medcin , m.nom_medcin 
     from service s 
     join  medcin_service ms using ( id_service)
@@ -294,3 +300,10 @@ from medcin m
 join intervention_medcin im  using (id_medcin) 
 join intervention i on i.id_intervention = im.id_inter
 join categorie c using (id_categorie) ;
+
+
+create view vue_sejour_medecin_client as 
+select m.id_medcin , m.nom_medcin , s.id_sejour , c.id_client , c.nom_client , c.prenom_client 
+from sejour s
+join  medcin m  on s.id_medcin = m.id_medcin 
+join client c on c.id_client = s.id_client;
