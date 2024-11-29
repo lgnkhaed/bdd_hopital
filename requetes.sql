@@ -7,7 +7,7 @@
     join medcin on medcin.id_medcin = intervention_medcin.id_medcin 
     where medcin.nom_medcin in ('Dupond' , 'Durant');  
 
-    --2  
+    -- 2  
     select sum(i.cout_intervention) + sum(m.prix_inter) + (datediff(s.date_fin_sejour,s.date_debut_sejour) * c.cout_journee) as cout_sejour 
     from sejour s 
     join intervention i on s.id_sejour = i.id_sejour 
@@ -18,9 +18,7 @@
     group by s.id_sejour 
     Having s.id_sejour='S123';
 
-    --3 : fausse faut la modifier 
-    -- requete pour ttouver les medcins qui ont fait une ointervention de type hernie d'escale 
-
+    -- 3 : 
     select distinct  m.id_medcin , m.nom_medcin , medcin.prenom_medcin 
     from medecin_service m
     join medcin on medcin.id_medcin = m.id_medcin 
@@ -28,6 +26,16 @@
             from vue_intervention_medcin im
             where nom_categorie = 'opération hernie discale'
 			);
-
+    
+    -- 4 
+   
+    select distinct v.id_client , v.nom_client , v.prenom_client 
+    from vue_sejour_medecin_client v
+    where v.nom_medcin = 'Dupond' and (v.id_client , v.nom_client , v.prenom_client ) not in  (
+           select v2.id_client , v2.nom_client , v2.prenom_client 
+           from vue_sejour_medecin_client v2
+	         where v2.nom_medcin <> 'Dupond'
+          );
+  
 
 
