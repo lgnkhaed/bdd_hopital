@@ -78,7 +78,7 @@ create table intervention (
   
 );
 
-create table medecins_service (
+create table medecin_service (
     id_service int  not null  ,
     foreign key (id_service) references service(id_service), 
     id_medecin varchar(20)  not null , 
@@ -242,7 +242,7 @@ VALUES
 ('S002',1,2500.00);
 
 
-insert into medecins_service(id_service, id_medecin) 
+insert into medecin_service(id_service, id_medecin) 
 values (1,'M000'),
      (1,'M012'),
      (2,'M001'),
@@ -289,7 +289,7 @@ values
 create view vue_medecin_service as 
     select s.id_service , s.nom_service , m.id_medecin , m.nom_medecin 
     from service s 
-    join  medecins_service ms using ( id_service)
+    join  medecin_service ms using ( id_service)
     join medecin m  using (id_medecin);
 
 
