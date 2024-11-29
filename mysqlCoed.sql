@@ -10,11 +10,11 @@ create table client (
      boursier Boolean 
 );
 
-create table medcin (
-    id_medcin varchar(20)  primary key  not null , 
-    nom_medcin varchar (25) not null ,
-    prenom_medcin varchar (25) not null ,
-    adresse_medcin  varchar(20) , 
+create table medecin (
+    id_medecin varchar(20)  primary key  not null , 
+    nom_medecin varchar (25) not null ,
+    prenom_medecin varchar (25) not null ,
+    adresse_medecin  varchar(20) , 
     date_de_naissance date,
     prix_inter decimal(10,2) 
 
@@ -24,8 +24,8 @@ create table medcin (
 create table service (
     id_service int auto_increment not null primary key , 
     nom_service varchar(25) not null , 
-    id_medcin_respo  varchar(20)  , 
-    foreign key (id_medcin_respo) references medcin(id_medcin)
+    id_medecin_respo  varchar(20)  , 
+    foreign key (id_medecin_respo) references medecin(id_medecin)
 	on delete set null 
 );
 
@@ -61,8 +61,8 @@ create table sejour(
    date_fin_sejour date not null ,  
    id_client varchar(20) not null , 
    foreign key (id_client) references client(id_client) ,
-   id_medcin varchar(20)  not null , 
-   foreign key (id_medcin) references medcin(id_medcin),
+   id_medecin varchar(20)  not null , 
+   foreign key (id_medecin) references medecin(id_medecin),
    id_place int not null , 
    foreign key (id_place) references place(id_place)
 );
@@ -78,21 +78,21 @@ create table intervention (
   
 );
 
-create table medcin_service (
+create table medecins_service (
     id_service int  not null  ,
     foreign key (id_service) references service(id_service), 
-    id_medcin varchar(20)  not null , 
-    foreign key (id_medcin) references medcin(id_medcin) ,
-    primary key (id_service,id_medcin)
+    id_medecin varchar(20)  not null , 
+    foreign key (id_medecin) references medecin(id_medecin) ,
+    primary key (id_service,id_medecin)
 );
 
 
-create table intervention_medcin (
+create table intervention_medecin (
     id_inter int  not null , 
     foreign key (id_inter) references  intervention(id_intervention),
-    id_medcin varchar(20) not null , 
-    foreign key (id_medcin) references medcin(id_medcin),
-    primary key (id_inter , id_medcin ) 
+    id_medecin varchar(20) not null , 
+    foreign key (id_medecin) references medecin(id_medecin),
+    primary key (id_inter , id_medecin ) 
 );
 
 
@@ -117,7 +117,7 @@ VALUES
 
 
 
-INSERT INTO medcin (id_medcin, nom_medcin, prenom_medcin, adresse_medcin, date_de_naissance, prix_inter)
+INSERT INTO medecin (id_medecin, nom_medecin, prenom_medecin, adresse_medecin, date_de_naissance, prix_inter)
 VALUES
 ('M000', 'Dupond', 'Carlos', 'Madrid', '1979-05-22',40.00),
 ('M001', 'Durant', 'Liam', 'Oslo', '1983-11-16',50.00),
@@ -137,11 +137,10 @@ VALUES
 
 
 
-insert into service (nom_service, id_medcin_respo) 
+insert into service (nom_service, id_medecin_respo) 
 values 
 ('Urgences', 'M000'),
 ('Chirurgie', 'M001'),
-('Médecine générale','M003'),
 ('Radiologie', 'M004'),
 ('Pédiatrie', 'M005'),
 ('Cardiologie', 'M006'),
@@ -149,14 +148,22 @@ values
 ('Psychiatrie', 'M008'),
 ('Oncologie', 'M009'),
 ('Dentisterie', 'M002'),
-('Pharmacie', 'M010'),
 ('Hématologie', 'M011'),
 ('Ophtalmologie', 'M012');
 
 insert into categorie (nom_categorie,id_service) 
 values 
 ('opération hernie discale',2),
-('IRM',4);
+('IRM',3),
+('diagnostique',1),
+('vaccination',4),
+('electrocardiogramme',5),
+('Electromyogramme',6),
+('Tests psychométriques',7),
+('chimiotherapie',8),
+('malocclusion',9),
+('examen sanguin',10),
+('test de vue',11);
 
 insert into chambre(etage, nbrlits, cout_journee, id_service)
 values
@@ -181,11 +188,8 @@ values
 (10, 2, 120, 10),
 (8, 2, 120, 10),
 (11, 2, 140, 11),
-(4, 2, 150, 11),
-(2, 2, 160, 12),
-(1, 2, 160, 12),
-(1, 2, 180, 13),
-(3, 2, 180, 13);
+(4, 2, 150, 11);
+
 
 
 INSERT INTO place (id_chambre)
@@ -211,11 +215,8 @@ VALUES
 (19), (19),
 (20), (20),
 (21), (21),
-(22), (22),
-(23), (23),
-(24), (24),
-(25), (25),
-(26), (26);
+(22), (22);
+
 
 
 insert into sejour 
@@ -241,7 +242,7 @@ VALUES
 ('S002',1,2500.00);
 
 
-insert into medcin_service(id_service, id_medcin) 
+insert into medecins_service(id_service, id_medecin) 
 values (1,'M000'),
      (1,'M012'),
      (2,'M001'),
@@ -263,15 +264,13 @@ values (1,'M000'),
      (10,'M002'),
      (10,'M010'),
      (11,'M010'),
-     (12,'M011'),
-     (13,'M012'),
      (2,'M002'),
      (2,'M005'),
      (2,'M008'),
      (2,'M009');
      
 -- faut modifier ça aussi 
- insert into intervention_medcin(id_inter , id_medcin ) 
+ insert into intervention_medecin(id_inter , id_medecin ) 
 values 
 (1,'M001'),
 (1,'M003'),
@@ -287,23 +286,23 @@ values
 (6,'M005');
  
 
-create view medecin_service as 
-    select s.id_service , s.nom_service , m.id_medcin , m.nom_medcin 
+create view vue_medecin_service as 
+    select s.id_service , s.nom_service , m.id_medecin , m.nom_medecin 
     from service s 
-    join  medcin_service ms using ( id_service)
-    join medcin m  using (id_medcin);
+    join  medecins_service ms using ( id_service)
+    join medecin m  using (id_medecin);
 
 
-create view vue_intervention_medcin as 
-select m.id_medcin , m.nom_medcin , m.prenom_medcin , im.id_inter, i.id_categorie , c.nom_categorie
-from medcin m 
-join intervention_medcin im  using (id_medcin) 
+create view vue_intervention_medecin as 
+select m.id_medecin , m.nom_medecin , m.prenom_medecin , im.id_inter, i.id_categorie , c.nom_categorie
+from medecin m 
+join intervention_medecin im  using (id_medecin) 
 join intervention i on i.id_intervention = im.id_inter
 join categorie c using (id_categorie) ;
 
 
 create view vue_sejour_medecin_client as 
-select m.id_medcin , m.nom_medcin , s.id_sejour , c.id_client , c.nom_client , c.prenom_client 
+select m.id_medecin , m.nom_medecin , s.id_sejour , c.id_client , c.nom_client , c.prenom_client 
 from sejour s
-join  medcin m  on s.id_medcin = m.id_medcin 
+join  medecin m  on s.id_medecin = m.id_medecin 
 join client c on c.id_client = s.id_client;
