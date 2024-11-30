@@ -43,7 +43,8 @@ create table place (
   id_place int auto_increment not null primary key , 
   id_chambre int  , 
   foreign key (id_chambre) references chambre(id_chambre)
-  on delete cascade
+  on delete cascade,
+  occupee Boolean not null default false
 );
 
 
@@ -402,3 +403,31 @@ end $$
 delimiter ; 
 
 
+set global event_scheduler = ON;
+
+-- evenet : 
+
+delimiter $$ 
+
+create event mise_a_jour_places 
+on schedule every 1 day 
+do 
+begin 
+  
+   update place 
+   set occupee = false 
+   where id_place in ( select s.id_place 
+                       from sejour s where 
+                       curdate() > s.date_fin_sejour
+                       ); 
+                       
+   update place 
+   set occupee = true 
+   where id_place in ( select s.id_place 
+                       from sejour s 
+					where curdate() between s.date_debut_sejour and s.date_fin_sejour
+                    );
+                       
+end $$ 
+
+delimiter ; 
