@@ -328,11 +328,36 @@ from client c
 join sejour s on s.id_client = c.id_client ;
 
 
+create view  vue_service_chambre_place  as 
+select s.id_service , s.nom_service , c.id_chambre , p.id_place  
+from service s 
+join chambre c using(id_service) 
+join place p using (id_chambre);
 
 
 insert into client_sejour_not_paid(id_client,nom_client,prenom_client, adresse_client , id_sejour , paid ) 
 values 
 ('C123','laggoun','khaled','limoges','S001',false);
+
+-- trigger : 
+
+delimiter $$ 
+CREATE TRIGGER `intervention_medecin_before_insert` BEFORE INSERT ON `intervention_medecin` FOR EACH ROW BEGIN
+
+if new.id_medecin not in  ( select id_medcin 
+                          from vue_medecin_service vms
+						  where vms.nom_service ='Chirurgie' ) 
+AND new.id_inter in (  select  i.id_intervention
+							from  intervention i 
+							join categorie c using(id_categorie)
+							join service s using (id_service)
+							where  s.nom_service='Chirurgie')
+then 
+	signal sqlstate  '45000'	
+	set	message_text = "il est interdit d'affecter une operation de type chirurgie a un medecin non chirurgien";
+end if;
+END $$
+delimiter ;
 
 
 -- stored procedure :: 
@@ -350,3 +375,30 @@ begin
 
 end $$
 delimiter ;
+
+
+
+delimiter $$ 
+create procedure place_libre(in p_id_service int , in p_date_debut date , in duree int )
+begin 
+   declare p_date_fin  date ;
+   set p_date_fin = Date_ADD(p_date_debut , interval duree day);
+
+   if exists ( select 1 
+			   from vue_service_chambre_place v 
+               left join sejour s on s.id_place = v.id_place 
+               where (v.id_service = p_id_service and (s.date_debut_sejour >= p_date_fin OR p_date_debut >= s.date_fin_sejour ) ) or 
+               ( v.id_service =  p_id_service and s.id_sejour is null ) 
+   ) then 
+      select v.id_place , v.id_chambre , v.id_service 
+      from vue_service_chambre_place v 
+               left join sejour s on s.id_place = v.id_place 
+               where (v.id_service = p_id_service and (s.date_debut_sejour >= p_date_fin OR p_date_debut >= s.date_fin_sejour ) ) or 
+               ( v.id_service =  p_id_service and s.id_sejour is null );
+   else 
+       select 'Rien est libre !!' as message;
+   end if;
+end $$ 
+delimiter ; 
+
+
