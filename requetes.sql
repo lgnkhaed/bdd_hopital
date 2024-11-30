@@ -20,7 +20,7 @@
 
     -- 3 : 
     select distinct  m.id_medecin , m.nom_medecin , medecin.prenom_medecin 
-    from medecin_service m
+    from vue_medecin_service m
     join medecin on medecin.id_medecin = m.id_medecin 
     where nom_service = 'Chirurgie' and (m.id_medecin , m.nom_medecin ) not in ( select distinct im.id_medecin , im.nom_medecin 
             from vue_intervention_medecin im

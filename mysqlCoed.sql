@@ -1,5 +1,5 @@
-create schema projet_bdr2;
-use projet_bdr2;
+create schema projet_bdr;
+use projet_bdr;
 
 create table client (
      id_client  varchar(20) primary key   NOT NULL,
@@ -58,7 +58,8 @@ create table categorie(
 create table sejour(
    id_sejour varchar(10)  not null primary key , 
    date_debut_sejour   date  not null , 
-   date_fin_sejour date not null ,  
+   date_fin_sejour date not null , 
+   paid Boolean ,  
    id_client varchar(20) not null , 
    foreign key (id_client) references client(id_client) ,
    id_medecin varchar(20)  not null , 
@@ -95,6 +96,18 @@ create table intervention_medecin (
     primary key (id_inter , id_medecin ) 
 );
 
+create table client_sejour_not_paid (
+     id_client varchar(20) not null , 
+     foreign key (id_client) references client(id_client),
+	 nom_client varchar(25) ,
+	 prenom_client varchar(25),
+     adresse_client varchar(20), 
+	 id_sejour varchar(10) not null , 
+     foreign key (id_sejour) references sejour(id_sejour),
+     paid tinyint(1) , 
+	 primary key(id_client , id_sejour ) 
+);
+
 
 -- insertion 
 
@@ -106,7 +119,7 @@ VALUES
 ('C002', 'laggoun', 'aymen', 'alger', '2009-10-10',true ),
 ('C003', 'Smith', 'John', 'New York', '1990-01-15',true ),
 ('C004', 'Johnson', 'Emily', 'Los Angeles', '1985-06-20',true),
-('C005', 'Brown', 'Michael', 'London', '1982-11-05',true),
+('C005', 'Brown', 'Michael', 'London', '1982-11-05',false),
 ('C006', 'Williams', 'Sarah', 'Manchester', '1994-02-28',true),
 ('C007', 'Jones', 'David', 'Sydney', '1988-09-12',false),
 ('C008', 'Davis', 'Laura', 'Melbourne', '1991-03-18',false),
@@ -219,17 +232,17 @@ VALUES
 
 
 
-insert into sejour 
+insert into sejour (id_sejour,date_debut_sejour,date_fin_sejour, paid, id_client,id_medecin,id_place)
 values
-('S123' , '2024-09-01','2024-09-04' , 'C234' , 'M001' , 1),
-('S001','2022-08-01','2022-08-04','C123','M002',10),
-('S002','2023-04-01','2023-04-04','C001','M005',12),
-('S003' , '2020-08-06', '2020-08-08','C003','M000',8),
-('S004' , '2021-01-29', '2021-02-04','C003','M000',9),
-('S005' , '2022-01-15', '2022-01-20','C005','M000',11),
-('S006' , '2023-01-15', '2023-01-18','C005','M000',15),
-('S007' , '2023-02-10', '2023-02-13','C007','M000',19),
-('S008' , '2024-02-18', '2023-02-21','C007','M007',14);
+('S123' , '2024-09-01','2024-09-04',false,'C234' , 'M001' , 1),
+('S001','2022-08-01','2022-08-04',false,'C123','M002',10),
+('S002','2023-04-01','2023-04-04',true,'C001','M005',12),
+('S003' , '2020-08-06', '2020-08-08',false,'C003','M000',8),
+('S004' , '2021-01-29', '2021-02-04',true,'C003','M000',9),
+('S005' , '2022-01-15', '2022-01-20',true,'C005','M000',11),
+('S006' , '2023-01-15', '2023-01-18',false,'C005','M000',15),
+('S007' , '2023-02-10', '2023-02-13',false,'C007','M000',19),
+('S008' , '2024-02-18', '2023-02-21',false,'C007','M007',14);
 
 
 INSERT INTO intervention ( id_sejour, id_categorie, cout_intervention)
@@ -286,6 +299,8 @@ values
 (6,'M005');
  
 
+-- views 
+
 create view vue_medecin_service as 
     select s.id_service , s.nom_service , m.id_medecin , m.nom_medecin 
     from service s 
@@ -306,3 +321,32 @@ select m.id_medecin , m.nom_medecin , s.id_sejour , c.id_client , c.nom_client ,
 from sejour s
 join  medecin m  on s.id_medecin = m.id_medecin 
 join client c on c.id_client = s.id_client;
+
+create view vue_client_sejour as 
+select c.id_client , c.nom_client , c.prenom_client , c.adresse_client , c.boursier , s.id_sejour , s.paid
+from client c 
+join sejour s on s.id_client = c.id_client ;
+
+
+
+
+insert into client_sejour_not_paid(id_client,nom_client,prenom_client, adresse_client , id_sejour , paid ) 
+values 
+('C123','laggoun','khaled','limoges','S001',false);
+
+
+-- stored procedure :: 
+
+
+delimiter $$ 
+create procedure client_not_paid()
+begin 
+     truncate table client_sejour_not_paid;
+     insert into client_sejour_not_paid (id_client,nom_client,prenom_client,adresse_client,id_sejour,paid)
+	    select  vs.id_client,vs.nom_client,vs.prenom_client,vs.adresse_client,vs.id_sejour,vs.paid 
+             from vue_client_sejour vs 
+             where vs.boursier = false and vs.paid = false ;
+     
+
+end $$
+delimiter ;
