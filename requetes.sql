@@ -1,11 +1,15 @@
   -- les requetes :
      -- 1  
-    select distinct id_client , nom_client , prenom_client 
-    from client join sejour using (id_client)
-    join intervention using (id_sejour) 
-    join intervention_medecin on intervention_medecin.id_inter =  intervention.id_intervention 
-    join medecin on medecin.id_medecin = intervention_medecin.id_medecin 
-    where medecin.nom_medecin in ('Dupond' , 'Durant');  
+    select distinct vcs.id_client , vcs.nom_client , vcs.prenom_client 
+    from vue_client_sejour vcs 
+    join intervention i using (id_sejour)
+    join vue_intervention_medecin vim on vim.id_inter = i.id_intervention 
+    where vim.nom_medecin ='Dupond' and vcs.id_client in (
+															select distinct id_client 
+															from vue_client_sejour vcs 
+															join intervention i using (id_sejour)
+															join vue_intervention_medecin vim on vim.id_inter = i.id_intervention 
+															where vim.nom_medecin ='Durant'); 
 
     -- 2  
     select sum(i.cout_intervention) + sum(m.prix_inter) + (datediff(s.date_fin_sejour,s.date_debut_sejour) * c.cout_journee) as cout_sejour 

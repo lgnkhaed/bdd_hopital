@@ -253,7 +253,8 @@ VALUES
 ( 'S123', 1, 300.00),
 ( 'S123', 2, 400.00),
 ('S001',2,2500.00), 
-('S002',1,2500.00);
+('S002',1,2500.00),
+('S002',3,100);
 
 
 insert into medecin_service(id_service, id_medecin) 
@@ -287,6 +288,7 @@ values (1,'M000'),
  insert into intervention_medecin(id_inter , id_medecin ) 
 values 
 (1,'M001'),
+(1,'M000'),
 (1,'M003'),
 (2,'M004'),
 (2,'M009'),
@@ -297,7 +299,9 @@ values
 (3,'M011'),
 (3,'M001'),
 (6,'M001'),
-(6,'M005');
+(6,'M005'),
+(7,'M000'),
+(7,'M001');
  
 
 -- views 
