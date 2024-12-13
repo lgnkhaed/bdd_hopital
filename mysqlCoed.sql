@@ -478,6 +478,10 @@ delimiter ;
            from vue_sejour_medecin_client v2
 	         where v2.nom_medecin <> 'Dupond'
           );
+
+
+
+ call place_libre(2,'2024-09-01',10);
   
 
 
